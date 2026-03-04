@@ -1,0 +1,59 @@
+# Generic operating system and editor files
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules
+
+# Environment variables (crucial for keeping secrets private)
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# React & NestJS (Node.js ecosystem) specific files
+# Compiled output
+dist
+build
+tmp
+out-tsc
+
+# Logs and coverage
+*.log
+coverage/
+
+# Typescript cache file
+.tsbuildinfo
+
+# Django (Python ecosystem) specific files
+# Python compiled files
+*.pyc
+__pycache__/
+
+# SQLite database file (if used)
+db.sqlite3
+
+# Media and static file directories
+/media
+/static
+
+# Django migration files (should NOT be ignored, but sometimes mistakenly added)
+# Do not add migration/ to .gitignore, they are part of the codebase
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# IDE specific files (e.g., PyCharm, VS Code)
+# Can be put in a global gitignore if preferred
+.idea/
+
+# Lock files (generally recommended to include in version control, but listed here if you choose to ignore)
+# package-lock.json
+# yarn.lock
+# Pipfile.lock
+# poetry.lock
