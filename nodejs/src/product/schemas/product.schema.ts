@@ -11,9 +11,33 @@ class Image{
   @Prop({required:true,select:false})
   public_id:string
 }
-@Schema({ timestamps: true }) // Automatically adds createdAt and updatedAt fields
+
+
+@Schema({
+  timestamps:true,
+  toJSON: {
+    transform: (doc, ret: Record<string, any>) => {
+      // 1. Convert _id (ObjectId) to string 'id' for frontend
+      if (ret._id) {
+        ret.id = ret._id.toString();
+        delete ret._id;
+      }
+
+      // 2. Flatten image object to just the URL string
+      // Use optional chaining for safety
+      if (ret.image?.url) {
+        ret.image = ret.image.url;
+      }
+
+      // 3. Cleanup Mongoose internals
+      delete ret.__v;
+      
+      return ret;
+    },
+  },
+}) // Automatically adds createdAt and updatedAt fields
 export class Product {
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true,index:'text' })
   product_name: string;
 
   @Prop({ required: true })

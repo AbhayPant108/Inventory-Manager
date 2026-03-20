@@ -1,5 +1,5 @@
 
-class ApiResponse{
+export default class ApiResponse{
     message:string
     results?:any
     statusCode:number

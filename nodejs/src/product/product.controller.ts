@@ -1,16 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {createProductSchema, type CreateProductDto } from './dtos/create-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodValidationPipe } from 'src/zodValidation.pipe';
 import { diskStorage } from 'multer';
-import path, { extname } from 'path';
-import { log } from 'console';
+import  { extname } from 'path';
 import { RoleGuard } from './guards/role.guard';
 import { Roles } from './decorators/roles.decorator';
 import {type UpdateProductDto, updateProductSchema } from './dtos/update-product.dto';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import { file } from 'zod';
+import { queryZodSchema,type QueryDto } from './dtos/query.dto';
+import ApiResponse from 'utils/api.response';
+import { Product } from './schemas/product.schema';
 
 const multerOptions:MulterOptions = {
   storage:diskStorage({
@@ -42,13 +43,12 @@ export class ProductController {
   }
 
   @Get()
-  async getAll(){
-    const products = await this.productService.findAll()
-    return {
-      message:'Fetched all products.',
-      results:products,
-      statusCode:HttpStatus.OK
-    }
+  async getAll(@Query(new ZodValidationPipe(queryZodSchema)) queryDto:QueryDto){
+        let products:Product[] = []
+        if(!queryDto?.product_name) products = await this.productService.findProduct(queryDto)
+        else products = await this.productService.searchByName(queryDto.product_name)
+        return new ApiResponse('Products fetched.',HttpStatus.OK,products)
+
   }
 
   @Patch(':id')

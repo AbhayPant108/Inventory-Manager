@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException,HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
 import { Connection, Model, MongooseError } from 'mongoose';
@@ -7,6 +7,7 @@ import { UpdateProductDto } from './dtos/update-product.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { join } from 'path';
 import fs from 'fs';
+import { QueryDto } from './dtos/query.dto';
 
 @Injectable()
 export class ProductService {
@@ -23,24 +24,27 @@ export class ProductService {
             return newProduct
             
         }catch(error){
+            if(createProductDto.image?.public_id) await this.cloudinaryService.deleteFile(createProductDto.image.public_id)
             if(error.name == 'ValidationError') throw new BadRequestException('Validation failed.',error.message)
             if(error instanceof MongooseError) throw new InternalServerErrorException()
             throw error
         }
     }
 
-    async findAll(){
+    async findProduct(queryDto?:QueryDto){
         // 1. Fetch products
-    const products = await this.ProductModel.find().lean().exec();
+        let products:Product[] = []
+
+        if(!queryDto) products = await this.ProductModel.find().exec();
+        else {
+            products = await this.ProductModel.find(queryDto).exec();
+        }
     
     // 2. Base URL from environment variables
     const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000/uploads/';
 
     // 3. Map and format
-    return products.map(product => ({
-      ...product,
-      image: product.image ? product.image.url:'',
-    }));
+    return products
     }
     async update(updateProductDto:UpdateProductDto,productID:string,file?:Express.Multer.File){
         const session = await this.connection.startSession()
@@ -112,5 +116,11 @@ export class ProductService {
           fs.unlink(filepath,(error)=>{
                         if(error) console.log("Error deleting file: ",error);
                     })
+    }
+    async searchByName(name:string){
+        const products = await this.ProductModel.find({
+            product_name:{$regex:name,$options:'i'}
+        })
+        return products
     }
 }
