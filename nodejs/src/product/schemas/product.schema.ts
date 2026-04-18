@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 // Defines the document type for Mongoose queries
 export type ProductDocument = HydratedDocument<Product>;
-@Schema({id:false})
+@Schema({_id:false})
 class Image{
   @Prop({required:true})
   url:string
@@ -43,7 +43,7 @@ export class Product {
   @Prop({ required: true })
   description: string;
 
-  @Prop({type:Image,required: false, default: {},_id:false })
+  @Prop({type:Image,required:true })
   image: Image;
 
   @Prop({ required: true, min: 0 }) // Ensures price cannot be negative

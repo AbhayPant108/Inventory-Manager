@@ -13,7 +13,7 @@ export class CloudinaryService {
             }
         }catch(error){
             console.log(error);
-            throw new InternalServerErrorException('Failed to upload to cloud.')
+            throw new InternalServerErrorException('Failed to upload image to cloud.')
         }finally{
             fs.unlink(filePath,(error)=>{
                 if(error) console.log("Error deleting file: ",error);
