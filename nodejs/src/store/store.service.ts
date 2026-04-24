@@ -1,11 +1,11 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Model, MongooseError, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Store, StoreDocument } from './schemas/store.schema';
+import { Store } from './schemas/store.schema';
 import { CreateStoreDto } from './dtos/create-store.dto';
 import { QueryStoreDto } from './dtos/query-store.dto';
 import { UpdateStoreDto } from './dtos/update-store.dto';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { join } from 'path';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class StoreService {
         private readonly storeModel:Model<Store>,
         private readonly cloudinaryService: CloudinaryService
     ) {}
-    async create(createStoreDto: CreateStoreDto,userID:string,file:Express.Multer.File) {
+    async create(createStoreDto: CreateStoreDto,userID:string,file?:Express.Multer.File) {
         // Step 1: Validate the user's id
         this.ensureValidObjectId(userID,'owner id');  // validate refrence ids
         try {
@@ -73,7 +73,7 @@ export class StoreService {
     
         return filters;
       }
-    async update(id: string, updateStoreDto: UpdateStoreDto,userID:string,file:Express.Multer.File) {
+    async update(id: string, updateStoreDto: UpdateStoreDto,userID:string,file?:Express.Multer.File) {
         try{
         // Step 1: Check if the inventory doc exsists
         const store = await this.findStoreOrThrow(id,userID);

@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
-import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Store, storeSchema } from './schemas/store.schema';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
-  controllers: [StoreController,CloudinaryModule],
+  imports:[CloudinaryModule,MongooseModule.forFeature([{name:Store.name, schema:storeSchema}])],
+  controllers: [StoreController],
   providers: [StoreService],
 })
 export class StoreModule {}

@@ -19,7 +19,7 @@ export class UserService {
       }).lean().exec()
       if(existedUser) throw new ConflictException('User with this username or email already exists.')
       createUserDto.password = bcrypt.hashSync(createUserDto.password,10)
-      const newUser = await this.UserModel.create(createUserDto)
+      const newUser = await this.UserModel.create({...createUserDto,is_authenticated:true})
       return newUser
     }catch(error){
       if(error.name == 'ValidationError') throw new BadRequestException('Validation failed.')

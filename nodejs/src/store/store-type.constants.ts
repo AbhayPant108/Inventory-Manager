@@ -1,6 +1,6 @@
 
 export const STORE_TYPES = [
- 
+ 'Food','Electronics'
 ] as const;
 
 export type StoreTypes = (typeof STORE_TYPES)[number];

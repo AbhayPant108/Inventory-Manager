@@ -12,6 +12,7 @@ import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer
 import { queryZodSchema,type QueryDto } from './dtos/query.dto';
 import ApiResponse from 'utils/api.response';
 import { Product } from './schemas/product.schema';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 const multerOptions:MulterOptions = {
   storage:diskStorage({
@@ -24,6 +25,7 @@ const multerOptions:MulterOptions = {
 }
 
 @Controller('product')
+@UseGuards(AuthGuard)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @Post()

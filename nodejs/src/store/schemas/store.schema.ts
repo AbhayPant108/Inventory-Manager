@@ -19,7 +19,9 @@ class Image{
         ret.id = ret._id.toString();
         delete ret._id;
       }
-
+      if (ret.image){
+        ret.image = ret.image.url
+      }
       for (const field of ['store_id', 'supplier_id', 'product_id']) {
         if (ret[field] && typeof ret[field] !== 'string') {
           ret[field] = ret[field].toString();

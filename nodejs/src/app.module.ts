@@ -31,7 +31,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     inject: [ConfigService],
     useFactory: async (config: ConfigService) => ({
     // This safely waits until the .env file is fully loaded
-    uri: config.get<string>('MONGODB_URL'), 
+    uri:  config.get<string>('MONGODB_URL'), 
   }),
 }),
     AuthModule, UserModule, ProductModule, StoreModule, SupplierModule, InventoryModule, PurchasesModule, SalesModule, CloudinaryModule

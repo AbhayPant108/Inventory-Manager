@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import {
@@ -31,15 +32,18 @@ import {
 import { ZodValidationPipe } from '../zodValidation.pipe';
 import ApiResponse from '../../utils/api.response';
 import {type PayloadDto } from 'src/auth/dtos/payload.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { User } from 'src/auth/user.decorator';
 
 @Controller('inventory')
+@UseGuards(AuthGuard)
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @Post()
   async create(
     @Body(new ZodValidationPipe(createInventorySchema))
-    createInventoryDto: CreateInventoryDto,user:PayloadDto
+    createInventoryDto: CreateInventoryDto,@User() user:PayloadDto
   ) {
     const inventory = await this.inventoryService.create(createInventoryDto,user.id);
 
@@ -53,7 +57,7 @@ export class InventoryController {
   @Get()
   async findAll(
     @Query(new ZodValidationPipe(queryInventorySchema))
-    queryInventoryDto: QueryInventoryDto,user:PayloadDto
+    queryInventoryDto: QueryInventoryDto,@User() user:PayloadDto
   ) {
     const inventoryItems =
       await this.inventoryService.findAll(queryInventoryDto,user.id);
@@ -68,7 +72,7 @@ export class InventoryController {
   @Get('low-stock')
   async findLowStock(
     @Query(new ZodValidationPipe(queryInventorySchema))
-    queryInventoryDto: QueryInventoryDto,user:PayloadDto
+    queryInventoryDto: QueryInventoryDto,@User() user:PayloadDto
   ) {
     const inventoryItems =
       await this.inventoryService.findLowStock(queryInventoryDto,user.id);
@@ -81,7 +85,7 @@ export class InventoryController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string,user:PayloadDto) {
+  async findOne(@Param('id') id: string,@User() user:PayloadDto) {
     const inventory = await this.inventoryService.findOne(id,user.id);
 
     return new ApiResponse(
@@ -128,7 +132,7 @@ export class InventoryController {
   async restock(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(stockQuantitySchema))
-    stockQuantityDto: StockQuantityDto,user:PayloadDto
+    stockQuantityDto: StockQuantityDto,@User() user:PayloadDto
   ) {
     const inventory = await this.inventoryService.restock(id, stockQuantityDto,user.id);
 
@@ -143,7 +147,7 @@ export class InventoryController {
   async reserveStock(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(stockQuantitySchema))
-    stockQuantityDto: StockQuantityDto,user:PayloadDto
+    stockQuantityDto: StockQuantityDto,@User() user:PayloadDto
   ) {
     const inventory = await this.inventoryService.reserveStock(
       id,
@@ -161,7 +165,7 @@ export class InventoryController {
   async releaseReservedStock(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(stockQuantitySchema))
-    stockQuantityDto: StockQuantityDto,user:PayloadDto
+    stockQuantityDto: StockQuantityDto,@User() user:PayloadDto
   ) {
     const inventory = await this.inventoryService.releaseReservedStock(
       id,
@@ -179,7 +183,7 @@ export class InventoryController {
   async consumeReservedStock(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(stockQuantitySchema))
-    stockQuantityDto: StockQuantityDto,user:PayloadDto
+    stockQuantityDto: StockQuantityDto,@User() user:PayloadDto
   ) {
     const inventory = await this.inventoryService.consumeReservedStock(
       id,
@@ -194,7 +198,7 @@ export class InventoryController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string,user:PayloadDto) {
+  async delete(@Param('id') id: string,@User() user:PayloadDto) {
     await this.inventoryService.delete(id,user.id);
 
     return new ApiResponse(
